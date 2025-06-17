@@ -4,7 +4,9 @@ const rl = @cImport({
 });
 
 const Animation = @import("../graphics/animation.zig").Animation;
-const Input = @import("input.zig").Input;
+const InputModule = @import("input.zig");
+const Input = InputModule.Input;
+const MovementVector = Input.MovementVector;
 const constants = @import("../utils/constants.zig");
 
 pub const Duck = struct {

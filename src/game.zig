@@ -43,7 +43,14 @@ pub const Game = struct {
         rl.CloseWindow();
     }
 
-    fn run(self: *Game) void {
+    pub fn run(self: *Game) void {
+        while (!rl.WindowShouldClose()) {
+            self.update();
+            self.draw();
+        }
+    }
+
+    fn update(self: *Game) void {
         const input = Input.update();
         self.duck.update(input);
     }

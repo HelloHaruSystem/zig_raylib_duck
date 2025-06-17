@@ -31,7 +31,7 @@ pub const Animation = struct {
     }
 
     pub fn update(self: *Animation) void {
-        self.frame_count += 1;
+        self.frame_counter += 1;
 
         if (self.frame_counter >= (@divTrunc(60, self.frame_speed))) {
             self.frame_counter = 0;

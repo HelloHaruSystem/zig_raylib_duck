@@ -3,7 +3,7 @@ const Game = @import("game.zig").Game;
 
 pub fn main() !void {
     // setup allocator
-    const gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ = gpa.deinit();
     const allocator = gpa.allocator();
 
