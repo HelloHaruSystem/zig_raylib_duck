@@ -2,7 +2,7 @@ const std = @import("std");
 
 // animation constants
 pub const MAX_FRAME_SPEED = 15;
-pub const const MIN_FRAME_SPEED = 1;
+pub const MIN_FRAME_SPEED = 1;
 
 // duck sprite animation constants
 pub const DUCK_FRAMES = 6; // 4 frames per animation
