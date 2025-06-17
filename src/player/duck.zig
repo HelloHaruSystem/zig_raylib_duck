@@ -61,7 +61,7 @@ pub const Duck = struct {
         return self.animation.current_frame + 1;
     }
 
-    pub fn getCurrentSpeed(self: *Duck) i32 {
+    pub fn getFrameSpeed(self: *Duck) i32 {
         return self.animation.frame_speed;
     }
 };
