@@ -20,7 +20,8 @@ pub fn main() void {
     defer rl.CloseWindow();
 
     // load the duck sprite sheet texture
-    const duck_texture = rl.LoadTexture("src/assets/ducky_3_spritesheet.png");
+    const duck_texture = rl.LoadTexture("src/assets/ducky_3_spritesheet.png"); // for linux
+    // const duck_texture = rl.LoadTexture(".\\assets\\ducky_3_spritesheet.png"); // for windows
     defer rl.UnloadTexture(duck_texture);
 
     // calculate the frame dimensions
@@ -44,8 +45,7 @@ pub fn main() void {
     var frame_speed: i32 = 8; // animation speed (frames per second)
 
     // movement variables
-    var moving_right = true;
-    const duck_speed: f32 = 2.0;
+    const duck_speed: f32 = 2.5;
 
     // set target fps with raylib
     rl.SetTargetFPS(60);
@@ -80,24 +80,11 @@ pub fn main() void {
         if (frame_speed > MAX_FRAME_SPEED) frame_speed = MAX_FRAME_SPEED;
         if (frame_speed < MIN_FRAME_SPEED) frame_speed = MIN_FRAME_SPEED;
 
-        // move the duck horizontally and bounce off screen edges
-        if (moving_right) {
-            position.x += duck_speed;
-            if (position.x > @as(f32, @floatFromInt(screen_width)) - frame_width * 2.0) {
-                moving_right = false;
-            }
-        } else {
-            position.x -= duck_speed;
-            if (position.x < 0) {
-                moving_right = true;
-            }
-        }
-
         // manual control with WASD keys
-        if (rl.IsKeyDown(rl.KEY_W)) position.y -= 3.0;
-        if (rl.IsKeyDown(rl.KEY_S)) position.y += 3.0;
-        if (rl.IsKeyDown(rl.KEY_A)) position.x -= 3.0;
-        if (rl.IsKeyDown(rl.KEY_D)) position.x += 3.0;
+        if (rl.IsKeyDown(rl.KEY_W) and position.y > 0) position.y -= duck_speed;
+        if (rl.IsKeyDown(rl.KEY_S) and position.y < @as(f32, @floatFromInt(screen_height)) - frame_height * 2.0) position.y += duck_speed;
+        if (rl.IsKeyDown(rl.KEY_A) and position.x > 0) position.x -= duck_speed;
+        if (rl.IsKeyDown(rl.KEY_D) and position.x < @as(f32, @floatFromInt(screen_width)) - frame_width * 2.0) position.x += duck_speed;
 
         //--------------------------------------------------------------------------------------------------------------\\
 
@@ -117,17 +104,12 @@ pub fn main() void {
 
         // Draw the animated duck (current frame)
         const scale = 2.0; // double the size of the duck
-        var dest_rectangle = rl.Rectangle{
+        const dest_rectangle = rl.Rectangle{
             .x = position.x,
             .y = position.y,
             .width = frame_width * scale,
             .height = frame_height * scale,
         };
-
-        // flip horizontally when moving left
-        if (!moving_right) {
-            dest_rectangle.width = -dest_rectangle.width;
-        }
 
         rl.DrawTexturePro(
             duck_texture,
@@ -139,8 +121,8 @@ pub fn main() void {
         );
 
         // Draw the UI text
-        rl.DrawText("Duck Walking Animation (4 frames)", 10, 10, 20, rl.DARKGRAY);
-        rl.DrawText(rl.TextFormat("Frame Speed: %i fps (Current: %i/4)", frame_speed, current_frame + 1), 10, screen_height - 60, 10, rl.DARKGRAY);
+        rl.DrawText("Duck Walking Animation (6 frames)", 10, 10, 20, rl.DARKGRAY);
+        rl.DrawText(rl.TextFormat("Frame Speed: %i fps (Current: %i/6)", frame_speed, current_frame + 1), 10, screen_height - 60, 10, rl.DARKGRAY);
         rl.DrawText("Use LEFT/RIGHT arrows to change animation speed", 10, screen_height - 40, 10, rl.DARKGRAY);
         rl.DrawText("Use WASD to move duck manually", 10, screen_height - 20, 10, rl.DARKGRAY);
         //--------------------------------------------------------------------------------------------------------------\\
