@@ -3,6 +3,7 @@ const rl = @cImport({
     @cInclude("raylib.h");
 });
 
+<<<<<<< HEAD
 const Animation = @import("../graphics/animation.zig").Animation;
 const InputModule = @import("input.zig");
 const Input = InputModule.Input;
@@ -67,3 +68,8 @@ pub const Duck = struct {
         return self.animation.frame_speed;
     }
 };
+=======
+const Animation = @import("../")
+const Input = @import("input.zig").Input;
+const constants = @import("../utils/constants.zig");
+>>>>>>> 40094927467f126de6b01e42ed9391035b27e277

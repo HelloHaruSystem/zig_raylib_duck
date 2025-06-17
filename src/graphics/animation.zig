@@ -2,7 +2,10 @@ const std = @import("std");
 const rl = @cImport({
     @cInclude("raylib.h");
 });
+<<<<<<< HEAD
 
+=======
+>>>>>>> 40094927467f126de6b01e42ed9391035b27e277
 const constants = @import("../utils/constants.zig");
 
 pub const Animation = struct {
@@ -37,7 +40,11 @@ pub const Animation = struct {
             self.frame_counter = 0;
             self.current_frame += 1;
 
+<<<<<<< HEAD
             // loop back to first frame when reaching the end
+=======
+            // Loop back to first frame when reaching the end
+>>>>>>> 40094927467f126de6b01e42ed9391035b27e277
             if (self.current_frame >= self.frame_count) {
                 self.current_frame = 0;
             }
@@ -66,8 +73,13 @@ pub const Animation = struct {
     }
 
     pub fn draw(self: *Animation, position: rl.Vector2, scale: f32) void {
+<<<<<<< HEAD
         const source_rectangle = self.getSourceRectangle();
         const destination_rectangle = rl.Rectangle{
+=======
+        const source_rect = self.getSourceRectangle();
+        const dest_rect = rl.Rectangle{
+>>>>>>> 40094927467f126de6b01e42ed9391035b27e277
             .x = position.x,
             .y = position.y,
             .width = self.frame_width * scale,
@@ -76,8 +88,13 @@ pub const Animation = struct {
 
         rl.DrawTexturePro(
             self.texture,
+<<<<<<< HEAD
             source_rectangle,
             destination_rectangle,
+=======
+            source_rect,
+            dest_rect,
+>>>>>>> 40094927467f126de6b01e42ed9391035b27e277
             rl.Vector2{ .x = 0, .y = 0 },
             0.0,
             rl.WHITE,
@@ -89,6 +106,7 @@ pub const Animation = struct {
         rl.DrawTextureEx(self.texture, position, 0.0, scale, rl.WHITE);
 
         // Draw frame outline on reference sprite sheet
+<<<<<<< HEAD
         const source_rectangle = self.getSourceRectangle();
         rl.DrawRectangleLines(
             @as(i32, @intFromFloat(position.x + source_rectangle.x * scale)),
@@ -97,5 +115,9 @@ pub const Animation = struct {
             @as(i32, @intFromFloat(self.frame_height * scale)),
             rl.LIME,
         );
+=======
+        const source_rect = self.getSourceRectangle();
+        rl.DrawRectangleLines(@as(i32, @intFromFloat(position.x + source_rect.x * scale)), @as(i32, @intFromFloat(position.y + source_rect.y * scale)), @as(i32, @intFromFloat(self.frame_width * scale)), @as(i32, @intFromFloat(self.frame_height * scale)), rl.LIME);
+>>>>>>> 40094927467f126de6b01e42ed9391035b27e277
     }
 };
