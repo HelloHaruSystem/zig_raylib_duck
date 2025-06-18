@@ -13,11 +13,13 @@ const Tilemap = @import("../world/tilemap.zig").Tilemap;
 pub const Duck = struct {
     position: rl.Vector2,
     animation: Animation,
+    is_moving: bool,
 
     pub fn init(texture: rl.Texture2D) Duck {
         return Duck{
             .position = rl.Vector2{ .x = 350.0, .y = 280.0 },
-            .animation = Animation.init(texture, constants.DUCK_FRAMES, constants.DUCK_ROWS),
+            .animation = Animation.init(texture, constants.DUCK_IDLE_FRAMES, constants.DUCK_WALK_FRAMES, constants.DUCK_ROWS),
+            .is_moving = false,
         };
     }
 
@@ -29,32 +31,50 @@ pub const Duck = struct {
             self.animation.changeSpeed(-1);
         }
 
-        // handle movement with boundary checking
+        // check if duck is trying to move
         const movement = input.getMovementVector();
-        const new_x = self.position.x + movement.x * constants.DUCK_SPEED;
-        const new_y = self.position.y + movement.y * constants.DUCK_SPEED;
+        const was_moving = self.is_moving;
+        self.is_moving = input.hasMovement();
 
-        // get duck dimensions
-        const duck_width = self.animation.frame_width * constants.SPRITE_SCALE;
-        const duck_height = self.animation.frame_height * constants.SPRITE_SCALE;
+        // switch animation based on movement state
+        if (self.is_moving) {
+            self.animation.setRow(constants.WALK_ROW);
+        } else {
+            self.animation.setRow(constants.IDLE_ROW);
+        }
 
-        // screen boundary checking
-        const max_x = @as(f32, @floatFromInt(constants.SCREEN_WIDTH)) - duck_width;
-        const max_y = @as(f32, @floatFromInt(constants.SCREEN_HEIGHT)) - duck_height;
+        // handle movement with boundary checking (if duck is moving)
+        if (self.is_moving) {
+            const new_x = self.position.x + movement.x * constants.DUCK_SPEED;
+            const new_y = self.position.y + movement.y * constants.DUCK_SPEED;
 
-        // check x movement
-        if (new_x >= 0 and new_x <= max_x) {
-            // check collision with tilemap for x movement
-            if (!self.checkCollision(new_x, self.position.y, duck_width, duck_height, tilemap)) {
-                self.position.x = new_x;
+            // get duck dimensions
+            const duck_width = self.animation.frame_width * constants.SPRITE_SCALE;
+            const duck_height = self.animation.frame_height * constants.SPRITE_SCALE;
+
+            // screen boundary checking
+            const max_x = @as(f32, @floatFromInt(constants.SCREEN_WIDTH)) - duck_width;
+            const max_y = @as(f32, @floatFromInt(constants.SCREEN_HEIGHT)) - duck_height;
+
+            // check x movement
+            if (new_x >= 0 and new_x <= max_x) {
+                // check collision with tilemap for x movement
+                if (!self.checkCollision(new_x, self.position.y, duck_width, duck_height, tilemap)) {
+                    self.position.x = new_x;
+                }
+            }
+
+            // check y movement
+            if (new_y >= 0 and new_y <= max_y) {
+                if (!self.checkCollision(self.position.x, new_y, duck_width, duck_height, tilemap)) {
+                    self.position.y = new_y;
+                }
             }
         }
 
-        // check y movement
-        if (new_y >= 0 and new_y <= max_y) {
-            if (!self.checkCollision(self.position.x, new_y, duck_width, duck_height, tilemap)) {
-                self.position.y = new_y;
-            }
+        // reset frame when switching between idle and walking for smooths transitions (nice)
+        if (was_moving != self.is_moving) {
+            self.animation.resetFrame();
         }
 
         // update animation

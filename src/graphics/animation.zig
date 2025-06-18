@@ -12,20 +12,33 @@ pub const Animation = struct {
     frame_counter: i32,
     frame_speed: i32,
     current_row: i32,
-    frame_count: i32,
+    idle_frame_count: i32,
+    walk_frame_count: i32,
     row_count: i32,
 
-    pub fn init(texture: rl.Texture2D, frame_count: i32, row_count: i32) Animation {
+    pub fn init(texture: rl.Texture2D, idle_frame_count: i32, walk_frame_count: i32, row_count: i32) Animation {
+        // use the larger frame count for calculating frame width to ensure it works
+        const max_frame_count = @max(idle_frame_count, walk_frame_count);
+
         return Animation{
             .texture = texture,
-            .frame_width = @as(f32, @floatFromInt(texture.width)) / @as(f32, @floatFromInt(frame_count)),
+            .frame_width = @as(f32, @floatFromInt(texture.width)) / @as(f32, @floatFromInt(max_frame_count)),
             .frame_height = @as(f32, @floatFromInt(texture.height)) / @as(f32, @floatFromInt(row_count)),
             .current_frame = 0,
             .frame_counter = 0,
             .frame_speed = constants.DEFAULT_FRAME_SPEED,
-            .current_row = constants.WALK_ROW,
-            .frame_count = frame_count,
+            .current_row = constants.IDLE_ROW, // start with idle animation
+            .idle_frame_count = idle_frame_count,
+            .walk_frame_count = walk_frame_count,
             .row_count = row_count,
+        };
+    }
+
+    fn getCurrentFrameCount(self: *Animation) i32 {
+        return switch (self.current_row) {
+            constants.IDLE_ROW => self.idle_frame_count,
+            constants.WALK_ROW => self.walk_frame_count,
+            else => self.idle_frame_count // default to idle frame count
         };
     }
 
@@ -37,7 +50,8 @@ pub const Animation = struct {
             self.current_frame += 1;
 
             // loop back to first frame when reaching the end
-            if (self.current_frame >= self.frame_count) {
+            const current_frame_count = self.getCurrentFrameCount();
+            if (self.current_frame >= current_frame_count) {
                 self.current_frame = 0;
             }
         }
@@ -61,7 +75,18 @@ pub const Animation = struct {
     pub fn setRow(self: *Animation, row: i32) void {
         if (row >= 0 and row < self.row_count) {
             self.current_row = row;
+            
+            // reset frame when changing rows to avoid out-of-bounds!
+            const current_frame_count = self.getCurrentFrameCount();
+            if (self.current_frame >= current_frame_count) {
+                self.current_frame = 0;
+            }
         }
+    }
+
+    pub fn resetFrame(self: *Animation) void {
+        self.current_frame = 0;
+        self.frame_counter = 0;
     }
 
     pub fn draw(self: *Animation, position: rl.Vector2, scale: f32) void {
