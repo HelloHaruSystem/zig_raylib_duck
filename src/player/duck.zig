@@ -8,6 +8,7 @@ const InputModule = @import("input.zig");
 const Input = InputModule.Input;
 const MovementVector = Input.MovementVector;
 const constants = @import("../utils/constants.zig");
+const Tilemap = @import("../world/tilemap.zig").Tilemap;
 
 pub const Duck = struct {
     position: rl.Vector2,
@@ -20,7 +21,7 @@ pub const Duck = struct {
         };
     }
 
-    pub fn update(self: *Duck, input: Input) void {
+    pub fn update(self: *Duck, input: Input, tilemap: *const Tilemap) void {
         // handle animation speed
         if (input.speed_up) {
             self.animation.changeSpeed(1);
@@ -33,20 +34,50 @@ pub const Duck = struct {
         const new_x = self.position.x + movement.x * constants.DUCK_SPEED;
         const new_y = self.position.y + movement.y * constants.DUCK_SPEED;
 
-        // boundary checking
-        const max_x = @as(f32, @floatFromInt(constants.SCREEN_WIDTH)) - self.animation.frame_width * constants.SPRITE_SCALE;
-        const max_y = @as(f32, @floatFromInt(constants.SCREEN_HEIGHT)) - self.animation.frame_height * constants.SPRITE_SCALE;
+        // get duck dimensions
+        const duck_width = self.animation.frame_width * constants.SPRITE_SCALE;
+        const duck_height = self.animation.frame_height * constants.SPRITE_SCALE;
 
+        // screen boundary checking
+        const max_x = @as(f32, @floatFromInt(constants.SCREEN_WIDTH)) - duck_width;
+        const max_y = @as(f32, @floatFromInt(constants.SCREEN_HEIGHT)) - duck_height;
+
+        // check x movement
         if (new_x >= 0 and new_x <= max_x) {
-            self.position.x = new_x;
+            // check collision with tilemap for x movement
+            if (!self.checkCollision(new_x, self.position.y, duck_width, duck_height, tilemap)) {
+                self.position.x = new_x;
+            }
         }
 
+        // check y movement
         if (new_y >= 0 and new_y <= max_y) {
-            self.position.y = new_y;
+            if (!self.checkCollision(self.position.x, new_y, duck_width, duck_height, tilemap)) {
+                self.position.y = new_y;
+            }
         }
 
         // update animation
         self.animation.update();
+    }
+
+    fn checkCollision(_: *Duck, x: f32, y: f32, width: f32, height: f32, tilemap: *const Tilemap) bool {
+        // check the four corners of the duck
+        // corners is an array of arrays, where each inner array has a size of 2([2]f32)
+        const corners = [_][2]f32{
+            .{ x, y },                 // top left
+            .{ x + width, y },         // top right
+            .{ x, y + height },        // bottom left
+            .{ x + width, y + width }  // bottom right
+        };
+
+        for (corners) |corner| {
+            if (tilemap.is_solid_at_world_pos(corner[0], corner[1])) {
+                return true; // detected collision
+            }
+        }
+
+        return false; // no collision
     }
 
     pub fn draw(self: *Duck) void {
