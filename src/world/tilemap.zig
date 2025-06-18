@@ -68,8 +68,8 @@ pub const Tilemap = struct {
 
     pub fn is_solid(self: *const Tilemap, x: u32, y: u32) bool {
         const tile = self.get_tile(x, y);
-        if (tile == self.get_tile(x, y)) {
-            tile.tile_kind = .solid;
+        if (tile) |t| {
+            return t.kind == tile_kind.solid;
         }
         return false;
     }
