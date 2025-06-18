@@ -13,8 +13,8 @@ pub const Tile = struct {
     friction: f32 = 1.0,
 
     // optionals
-    on_touch: ?fn () void = null,
-    on_step: ?fn () void = null,
+    on_touch: ?*fn () void = null,
+    on_step: ?*fn () void = null,
 };
 
 pub const tile_def = [_]Tile{
@@ -26,4 +26,5 @@ pub const tile_def = [_]Tile{
 
 fn water_splash() void {
     // splash
+    std.debug.print("🌊 Splash function has been called 🌊", .{});
 }

@@ -5,7 +5,7 @@ const rl = @cImport({
 
 const constants = @import("../utils/constants.zig");
 const tile_module = @import("../utils/tiles.zig");
-const Tile = tile_module.tile;
+const Tile = tile_module.Tile;
 const tile_def = tile_module.tile_def;
 const tile_kind = tile_module.tile_kind;
 
@@ -30,7 +30,7 @@ pub const Tilemap = struct {
                 if (row == 0 or row == height - 1 or column == 0 or column == width - 1) {
                     tiles[index] = 1; // solid border
                 } else if ((row + column) % 7 == 0) {
-                    tiles[index] == 2; // water
+                    tiles[index] = 2; // water
                 } else {
                     tiles[index] = 0; // grass
                 }
