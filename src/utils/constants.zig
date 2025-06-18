@@ -21,3 +21,8 @@ pub const DUCK_SPEED: f32 = 3.0;
 
 // display constants
 pub const REFERENCE_SCALE: f32 = 0.5;
+
+// tilemap constants
+pub const TILE_SIZE = 32;
+pub const TILEMAP_WIDTH = @divTrunc(SCREEN_WIDTH, TILE_SIZE);
+pub const TILEMAP_HEIGHT = @divTrunc(SCREEN_HEIGHT, TILE_SIZE);
