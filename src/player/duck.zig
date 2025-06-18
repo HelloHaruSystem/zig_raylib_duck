@@ -14,12 +14,14 @@ pub const Duck = struct {
     position: rl.Vector2,
     animation: Animation,
     is_moving: bool,
+    facing_left: bool,
 
     pub fn init(texture: rl.Texture2D) Duck {
         return Duck{
             .position = rl.Vector2{ .x = 350.0, .y = 280.0 },
             .animation = Animation.init(texture, constants.DUCK_IDLE_FRAMES, constants.DUCK_WALK_FRAMES, constants.DUCK_ROWS),
             .is_moving = false,
+            .facing_left = false,
         };
     }
 
@@ -35,6 +37,15 @@ pub const Duck = struct {
         const movement = input.getMovementVector();
         const was_moving = self.is_moving;
         self.is_moving = input.hasMovement();
+
+        // update facing direction based on horizontal movement?
+        if (movement.x < 0) {
+            self.facing_left = true;        // moving left
+        } else if (movement.x > 0) {
+            self.facing_left = false;       // moving right
+        }
+        // in case of only vertical moving keep current facing direction
+
 
         // switch animation based on movement state
         if (self.is_moving) {
@@ -101,7 +112,7 @@ pub const Duck = struct {
     }
 
     pub fn draw(self: *Duck) void {
-        self.animation.draw(self.position, constants.SPRITE_SCALE);
+        self.animation.draw(self.position, constants.SPRITE_SCALE, self.facing_left);
     }
 
     pub fn drawReference(self: *Duck) void {

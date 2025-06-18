@@ -75,7 +75,7 @@ pub const Animation = struct {
     pub fn setRow(self: *Animation, row: i32) void {
         if (row >= 0 and row < self.row_count) {
             self.current_row = row;
-            
+
             // reset frame when changing rows to avoid out-of-bounds!
             const current_frame_count = self.getCurrentFrameCount();
             if (self.current_frame >= current_frame_count) {
@@ -89,8 +89,15 @@ pub const Animation = struct {
         self.frame_counter = 0;
     }
 
-    pub fn draw(self: *Animation, position: rl.Vector2, scale: f32) void {
+    pub fn draw(self: *Animation, position: rl.Vector2, scale: f32, flip_horizontal: bool) void {
         const source_rectangle = self.getSourceRectangle();
+
+        // flip the source rectangle width if we want to flip horizontall
+        var final_source = source_rectangle;
+        if (flip_horizontal) {
+            final_source.width = -final_source.width;
+        }
+
         const destination_rectangle = rl.Rectangle{
             .x = position.x,
             .y = position.y,
@@ -100,7 +107,7 @@ pub const Animation = struct {
 
         rl.DrawTexturePro(
             self.texture,
-            source_rectangle,
+            final_source,
             destination_rectangle,
             rl.Vector2{ .x = 0, .y = 0 },
             0.0,
