@@ -16,5 +16,5 @@ pub fn main() !void {
 
     std.debug.print("Starting Duck Game! 🦆\n", .{});
     game.run();
-    std.debug.print("Game endedn. Thanks for playing! Quack 🦆\n", .{});
+    std.debug.print("Game ended. Thanks for playing! Quack 🦆\n", .{});
 }
