@@ -1,13 +1,13 @@
 const std = @import("std");
 
-const tile_kind = enum {
+pub const tile_kind = enum {
     grass,
     solid,
     water,
     // add more in the future (example one_way, slope and so on)
 };
 
-const tile = struct {
+pub const Tile = struct {
     kind: tile_kind,
     sprite: u16,
     friction: f32 = 1.0,
@@ -17,7 +17,7 @@ const tile = struct {
     on_step: ?fn () void = null,
 };
 
-const tile_def = [_]tile{
+pub const tile_def = [_]Tile{
     .{ .kind = .grass, .sprite = 0, },
     .{ .kind = .solid, .sprite = 1, },
     .{ .kind = .water, .sprite = 2, .friction = 0.5 } 
