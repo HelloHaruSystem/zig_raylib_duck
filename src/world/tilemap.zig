@@ -69,7 +69,7 @@ pub const Tilemap = struct {
     pub fn is_solid(self: *const Tilemap, x: u32, y: u32) bool {
         const tile = self.get_tile(x, y);
         if (tile) |t| {
-            return t.kind == tile_kind.solid;
+            return t.solid;
         }
         return false;
     }
@@ -96,7 +96,7 @@ pub const Tilemap = struct {
                 // use proper sprites in the future
                 const color = switch (tile.kind) {
                     tile_kind.grass => rl.GREEN,
-                    tile_kind.solid => rl.BROWN,
+                    tile_kind.wall => rl.BROWN,
                     tile_kind.water => rl.BLUE,
                 };
 
