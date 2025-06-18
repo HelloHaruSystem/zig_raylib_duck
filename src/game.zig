@@ -5,12 +5,14 @@ const rl = @cImport({
 
 const Duck = @import("player/duck.zig").Duck;
 const Input = @import("player/input.zig").Input;
+const TileMap = @import("world/tilemap.zig").Tilemap;
 const constants = @import("utils/constants.zig");
 const paths = @import("utils/paths.zig");
 
 pub const Game = struct {
     duck: Duck,
     duck_texture: rl.Texture2D,
+    tilemap: TileMap,
     allocator: std.mem.Allocator,
 
     pub fn init(allocator: std.mem.Allocator) !Game {
@@ -31,14 +33,19 @@ pub const Game = struct {
         }
 
         std.debug.print("Duck texture loaded successfully! Size: {}x{}\n", .{ duck_texture.width, duck_texture.height });
+
+        const tilemap = try TileMap.init(allocator, constants.TILEMAP_WIDTH, constants.TILEMAP_HEIGHT, constants.TILE_SIZE);
+
         return Game{
             .duck = Duck.init(duck_texture),
             .duck_texture = duck_texture,
+            .tilemap = tilemap,
             .allocator = allocator,
         };
     }
 
     pub fn deinit(self: *Game) void {
+        self.tilemap.deinit();
         rl.UnloadTexture(self.duck_texture);
         rl.CloseWindow();
     }
@@ -52,7 +59,7 @@ pub const Game = struct {
 
     fn update(self: *Game) void {
         const input = Input.update();
-        self.duck.update(input);
+        self.duck.update(input, &self.tilemap);
     }
 
     fn draw(self: *Game) void {
@@ -60,6 +67,9 @@ pub const Game = struct {
         defer rl.EndDrawing();
 
         rl.ClearBackground(rl.SKYBLUE);
+
+        // draw tilemap first (background)
+        self.tilemap.draw();
 
         // draw the reference sprite sheet
         self.duck.drawReference();
@@ -79,5 +89,6 @@ pub const Game = struct {
         rl.DrawText(rl.TextFormat("Frame Speed: %i fps (Current: %i/6)", frame_speed, current_frame), 10, constants.SCREEN_HEIGHT - 60, 10, rl.DARKGRAY);
         rl.DrawText("Use LEFT/RIGHT arrows to change animation speed", 10, constants.SCREEN_HEIGHT - 40, 10, rl.DARKGRAY);
         rl.DrawText("Use WASD to move duck", 10, constants.SCREEN_HEIGHT - 20, 10, rl.DARKGRAY);
+        rl.DrawText("Green=Grass, Brown=Solid, Blue=Water", 10, constants.SCREEN_HEIGHT - 20, 10, rl.DARKGRAY);
     }
 };
