@@ -85,10 +85,10 @@ pub const Game = struct {
         const current_frame = self.duck.getCurrentFrame();
         const frame_speed = self.duck.getFrameSpeed();
 
-        rl.DrawText("Duck Walking Animation (Idle: 4 frames, Walk: 6 frames) - WASD Control", 10, 10, 20, rl.DARKGRAY);
-        rl.DrawText(rl.TextFormat("Frame Speed: %i fps (Current: %i/6)", frame_speed, current_frame), 10, constants.SCREEN_HEIGHT - 60, 10, rl.DARKGRAY);
-        rl.DrawText("Use LEFT/RIGHT arrows to change animation speed", 10, constants.SCREEN_HEIGHT - 40, 10, rl.DARKGRAY);
-        rl.DrawText("Use WASD to move duck", 10, constants.SCREEN_HEIGHT - 20, 10, rl.DARKGRAY);
+        rl.DrawText("Duck Animation (Idle: 4 frames, Walk: 6 frames) - WASD Control", 10, 10, 20, rl.DARKGRAY);
+        rl.DrawText(rl.TextFormat("Frame Speed: %i fps (Current: %i)", frame_speed, current_frame), 10, constants.SCREEN_HEIGHT - 80, 10, rl.DARKGRAY);
+        rl.DrawText("Use LEFT/RIGHT arrows to change animation speed", 10, constants.SCREEN_HEIGHT - 60, 10, rl.DARKGRAY);
+        rl.DrawText("Use WASD to move duck", 10, constants.SCREEN_HEIGHT - 40, 10, rl.DARKGRAY);
         rl.DrawText("Green=Grass, Brown=Solid, Blue=Water", 10, constants.SCREEN_HEIGHT - 20, 10, rl.DARKGRAY);
     }
 };
