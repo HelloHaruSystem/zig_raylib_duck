@@ -13,7 +13,7 @@ pub const IDLE_ROW = 2;             // third row (0-indexed)
 pub const WALK_ROW = 1;             // second row (0-indexed)
 // duck scale
 pub const SPRITE_SCALE: f32 = 2.0;
-a
+
 // screen constants
 pub const SCREEN_WIDTH = 800;
 pub const SCREEN_HEIGHT = 450;
