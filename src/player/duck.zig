@@ -18,7 +18,10 @@ pub const Duck = struct {
 
     pub fn init(texture: rl.Texture2D) Duck {
         return Duck{
-            .position = rl.Vector2{ .x = 350.0, .y = 280.0 },
+            .position = rl.Vector2{
+                .x = @as(f32, @floatFromInt(constants.TILE_SIZE * 5)),
+                .y = @as(f32, @floatFromInt(constants.TILE_SIZE * 3)),
+            },
             .animation = Animation.init(texture, constants.DUCK_IDLE_FRAMES, constants.DUCK_WALK_FRAMES, constants.DUCK_ROWS),
             .is_moving = false,
             .facing_left = false,
@@ -105,7 +108,7 @@ pub const Duck = struct {
             .{ x, y },                 // top left
             .{ x + width, y },         // top right
             .{ x, y + height },        // bottom left
-            .{ x + width, y + width }  // bottom right
+            .{ x + width, y + height }  // bottom right
         };
 
         for (corners) |corner| {
