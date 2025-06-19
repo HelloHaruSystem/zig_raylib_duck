@@ -63,7 +63,7 @@ pub const MapLoader = struct {
 
         var lines = std.mem.splitSequence(u8, contents, "\n");
         while (lines.next()) |line| {
-            const trimmed = std.mem.trim(u8, line, "\t\r\n");
+            const trimmed = std.mem.trim(u8, line, " \t\r\n");
 
             // skip empty lines and comments
             if (trimmed.len == 0 or trimmed[0] == '#') continue;
@@ -83,7 +83,7 @@ pub const MapLoader = struct {
                 if (trimmed.len != width) return MapLoadError.InvalidTileData;
 
                 for (trimmed) |char| {
-                    const tile_id = switch (char) {
+                    const tile_id: u8 = switch (char) {
                         '0' => 0, // grass
                         '1' => 1, // wall
                         '2' => 2, // water

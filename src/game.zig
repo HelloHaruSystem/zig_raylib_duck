@@ -115,7 +115,7 @@ pub const Game = struct {
         var map_data = try MapLoader.loadMapByName(allocator, map_name);
         defer map_data.deinit();
 
-        std.debug.print("Map '{}' loaded successfully. Size: {}x{}\n", .{map_name, map_data.width, map_data.height});
+        std.debug.print("Map '{s}' loaded successfully. Size: {}x{}\n", .{map_name, map_data.width, map_data.height});
 
         return TileMap.initFromData(allocator, map_data.width, map_data.height, constants.TILE_SIZE, map_data.tiles);
     }
