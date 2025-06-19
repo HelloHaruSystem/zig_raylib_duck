@@ -11,11 +11,17 @@ pub const DUCK_IDLE_FRAMES = 4;     // frames per animation
 pub const DUCK_WALK_FRAMES = 6;     //  frames per animation
 pub const IDLE_ROW = 2;             // third row (0-indexed)
 pub const WALK_ROW = 1;             // second row (0-indexed)
-// duck scale
+// scaling constants
 pub const SPRITE_SCALE: f32 = 1.5;
 
+// tile constants
 pub const BASE_TILE_SIZE: f32 = 32;
 pub const TILE_SIZE: u32 = @as(u32, @intFromFloat(BASE_TILE_SIZE * SPRITE_SCALE)); 
+
+// Visible tiles
+// TODO: change when camera is added!
+pub const VISIBLE_TILES_WIDTH = @divTrunc(SCREEN_WIDTH, TILE_SIZE);   // 16 tiles
+pub const VISIBLE_TILES_HEIGHT = @divTrunc(SCREEN_HEIGHT, TILE_SIZE); // 9 tiles
 
 // screen constants
 pub const SCREEN_WIDTH = 800;

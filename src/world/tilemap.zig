@@ -64,7 +64,7 @@ pub const Tilemap = struct {
     }
 
     pub fn deinit(self: *Tilemap) void {
-        defer self.allocator.free(self.tiles);
+        self.allocator.free(self.tiles);
     }
 
     pub fn get_tile(self: *const Tilemap, x: u32, y: u32) ?Tile {

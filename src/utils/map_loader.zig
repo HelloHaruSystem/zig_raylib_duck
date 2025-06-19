@@ -74,7 +74,7 @@ pub const MapLoader = struct {
                 width = std.fmt.parseInt(u32, width_str, 10) catch return MapLoadError.InvalidFormat;
             } else if (std.mem.startsWith(u8, trimmed, "HEIGHT=")) {
                 const height_str = trimmed[7..];
-                height = std.fmt.parseInt(u8, height_str, 10) catch return MapLoadError.InvalidFormat;
+                height = std.fmt.parseInt(u32, height_str, 10) catch return MapLoadError.InvalidFormat;
             } else if (std.mem.eql(u8, trimmed, "DATA=")) {
                 parsing_data = true;
             } else if (parsing_data) {
