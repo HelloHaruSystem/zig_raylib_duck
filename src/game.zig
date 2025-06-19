@@ -6,6 +6,7 @@ const rl = @cImport({
 const Duck = @import("player/duck.zig").Duck;
 const Input = @import("player/input.zig").Input;
 const TileMap = @import("world/tilemap.zig").Tilemap;
+const MapLoader = @import("utils/map_loader.zig").MapLoader;
 const constants = @import("utils/constants.zig");
 const paths = @import("utils/paths.zig");
 
@@ -34,7 +35,11 @@ pub const Game = struct {
 
         std.debug.print("Duck texture loaded successfully! Size: {}x{}\n", .{ duck_texture.width, duck_texture.height });
 
-        const tilemap = try TileMap.init(allocator, constants.TILEMAP_WIDTH, constants.TILEMAP_HEIGHT, constants.TILE_SIZE);
+        // try to load tilemap from file, fallback to default genned
+        const tilemap = loadTilemap(allocator) catch |err| blk: {
+            std.debug.print("Failed to load map file ({}), using default map", .{err});
+            break :blk try TileMap.init(allocator, constants.VISIBLE_TILES_WIDTH, constants.VISIBLE_TILES_HEIGHT, constants.TILE_SIZE);
+        };
 
         return Game{
             .duck = Duck.init(duck_texture),
@@ -90,5 +95,28 @@ pub const Game = struct {
         rl.DrawText("Use LEFT/RIGHT arrows to change animation speed", 10, constants.SCREEN_HEIGHT - 60, 10, rl.DARKGRAY);
         rl.DrawText("Use WASD to move duck", 10, constants.SCREEN_HEIGHT - 40, 10, rl.DARKGRAY);
         rl.DrawText("Green=Grass, Brown=Solid, Blue=Water", 10, constants.SCREEN_HEIGHT - 20, 10, rl.DARKGRAY);
+    }
+
+    fn loadTilemap(allocator: std.mem.Allocator) !TileMap {
+        
+        if (loadSpecificMap(allocator, "test")) |tilemap| {
+            std.debug.print("Loaded test map\n", .{});
+            return tilemap;
+        } else |err| {
+            std.debug.print("Failed to load test.map: {}\n", .{err});
+        }
+        
+        // Fallback to procedural generation
+        std.debug.print("Using procedural generation as final fallback\n", .{});
+        return error.NoMapFound;
+    }
+
+    fn loadSpecificMap(allocator: std.mem.Allocator, map_name: []const u8) !TileMap {
+        var map_data = try MapLoader.loadMapByName(allocator, map_name);
+        defer map_data.deinit();
+
+        std.debug.print("Map '{s}' loaded successfully. Size: {}x{}\n", .{map_name, map_data.width, map_data.height});
+
+        return TileMap.initFromData(allocator, map_data.width, map_data.height, constants.TILE_SIZE, map_data.tiles);
     }
 };

@@ -16,6 +16,7 @@ pub const Tilemap = struct {
     tiles: []u8,
     allocator: std.mem.Allocator,
 
+    // init for procedural generation incase of fallback needed when error loading map data
     pub fn init(allocator: std.mem.Allocator, width: u32, height: u32, tile_size: u32) !Tilemap {
         const tile_count = width * height;
         const tiles = try allocator.alloc(u8, tile_count);
@@ -46,8 +47,24 @@ pub const Tilemap = struct {
         };
     }
 
+    pub fn initFromData(allocator: std.mem.Allocator, width: u32, height: u32, tile_size: u32, tile_data: []const u8) !Tilemap {
+        if (tile_data.len != width * height) {
+            return error.InvalidTileData;
+        }
+
+        const tiles = try allocator.dupe(u8, tile_data);
+
+        return Tilemap{
+            .width = width,
+            .height = height,
+            .tile_size = tile_size,
+            .tiles = tiles,
+            .allocator = allocator,
+        };
+    }
+
     pub fn deinit(self: *Tilemap) void {
-        defer self.allocator.free(self.tiles);
+        self.allocator.free(self.tiles);
     }
 
     pub fn get_tile(self: *const Tilemap, x: u32, y: u32) ?Tile {
