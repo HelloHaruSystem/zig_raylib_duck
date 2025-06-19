@@ -12,19 +12,21 @@ pub const DUCK_WALK_FRAMES = 6;     //  frames per animation
 pub const IDLE_ROW = 2;             // third row (0-indexed)
 pub const WALK_ROW = 1;             // second row (0-indexed)
 // duck scale
-pub const SPRITE_SCALE: f32 = 2.0;
+pub const SPRITE_SCALE: f32 = 1.5;
+
+pub const BASE_TILE_SIZE: f32 = 32;
+pub const TILE_SIZE: u32 = @as(u32, @intFromFloat(BASE_TILE_SIZE * SPRITE_SCALE)); 
 
 // screen constants
 pub const SCREEN_WIDTH = 800;
 pub const SCREEN_HEIGHT = 450;
 
 // movement constants
-pub const DUCK_SPEED: f32 = 3.0;
+pub const DUCK_SPEED: f32 = 3;                  // if sprite_scale is equal to 3 set it to 3.0 (REDUCED PROPORTIONALLY (3.0 * 1.5/2.0) == 2.25)
 
 // display constants
 pub const REFERENCE_SCALE: f32 = 0.5;
 
 // tilemap constants
-pub const TILE_SIZE = 32;
 pub const TILEMAP_WIDTH = @divTrunc(SCREEN_WIDTH, TILE_SIZE);
 pub const TILEMAP_HEIGHT = @divTrunc(SCREEN_HEIGHT, TILE_SIZE);

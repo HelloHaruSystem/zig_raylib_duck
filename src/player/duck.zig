@@ -56,8 +56,14 @@ pub const Duck = struct {
 
         // handle movement with boundary checking (if duck is moving)
         if (self.is_moving) {
-            const new_x = self.position.x + movement.x * constants.DUCK_SPEED;
-            const new_y = self.position.y + movement.y * constants.DUCK_SPEED;
+            // Get current tile friction
+            const current_friction = self.getCurrentTileFriction(tilemap);
+
+            // Apply friction to movement speed
+            const effective_speed = constants.DUCK_SPEED * current_friction;
+
+            const new_x = self.position.x + movement.x * effective_speed;
+            const new_y = self.position.y + movement.y * effective_speed;
 
             // get duck dimensions
             const duck_width = self.animation.frame_width * constants.SPRITE_SCALE;
@@ -127,5 +133,20 @@ pub const Duck = struct {
 
     pub fn getFrameSpeed(self: *Duck) i32 {
         return self.animation.frame_speed;
+    }
+
+    fn getCurrentTileFriction(self: *Duck, tilemap: *const Tilemap) f32 {
+        // get duck center position
+        const duck_width = self.animation.frame_width * constants.SPRITE_SCALE;
+        const duck_height = self.animation.frame_height * constants.SPRITE_SCALE;
+        const center_x = self.position.x + duck_width / 2.0;
+        const center_y = self.position.y + duck_height / 2.0;
+
+        // get the tile at the center position
+        if (tilemap.get_tile_at_world_pos(center_x, center_y)) |tile| {
+            return tile.friction;
+        }
+        // else return default
+        return 1.0;
     }
 };
