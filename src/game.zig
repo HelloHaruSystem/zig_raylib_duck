@@ -111,8 +111,12 @@ pub const Game = struct {
         return error.NoMapFound;
     }
 
-    fn loadSpecificMao(allocator: std.mem.Allocator, map_name: []const u8) !TileMap {
+    fn loadSpecificMap(allocator: std.mem.Allocator, map_name: []const u8) !TileMap {
         var map_data = try MapLoader.loadMapByName(allocator, map_name);
         defer map_data.deinit();
+
+        std.debug.print("Map '{}' loaded successfully. Size: {}x{}\n", .{map_name, map_data.width, map_data.height});
+
+        return TileMap.initFromData(allocator, map_data.width, map_data.height, constants.TILE_SIZE, map_data.tiles);
     }
 };

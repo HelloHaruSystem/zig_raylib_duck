@@ -48,7 +48,19 @@ pub const Tilemap = struct {
     }
 
     pub fn initFromData(allocator: std.mem.Allocator, width: u32, height: u32, tile_size: u32, tile_data: []const u8) !Tilemap {
-        
+        if (tile_data.len != width * height) {
+            return error.InvalidTileData;
+        }
+
+        const tiles = try allocator.dupe(u8, tile_data);
+
+        return Tilemap{
+            .width = width,
+            .height = height,
+            .tile_size = tile_size,
+            .tiles = tiles,
+            .allocator = allocator,
+        };
     }
 
     pub fn deinit(self: *Tilemap) void {
