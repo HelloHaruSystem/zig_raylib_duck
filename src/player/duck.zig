@@ -100,13 +100,26 @@ pub const Duck = struct {
     }
 
     fn checkCollision(_: *Duck, x: f32, y: f32, width: f32, height: f32, tilemap: *const Tilemap) bool {
+        // add a small margin to make collision be ore forgiving
+
+        // shrink the collision box by margin on all sides
+        const collision_x = x + constants.COLLISION_MARGIN;
+        const collision_y = y + constants.COLLISION_MARGIN;
+        const collision_width = width - (constants.COLLISION_MARGIN * 2.0);        
+        const collision_height = height - (constants.COLLISION_MARGIN * 2.0);         
+
+        // check and make sure we don't have negative dimensions
+        if (collision_width <= 0 or collision_height <= 0) {
+            return false; // if margin is too big, just movement no collision
+        }       
+        
         // check the four corners of the duck
         // corners is an array of arrays, where each inner array has a size of 2([2]f32)
         const corners = [_][2]f32{
-            .{ x, y },                 // top left
-            .{ x + width, y },         // top right
-            .{ x, y + height },        // bottom left
-            .{ x + width, y + height }  // bottom right
+            .{ collision_x, collision_y },                 // top left
+            .{ collision_x + collision_width, collision_y },         // top right
+            .{ collision_x, collision_y + collision_height },        // bottom left
+            .{ collision_x + collision_width, collision_y + collision_height }  // bottom right
         };
 
         for (corners) |corner| {

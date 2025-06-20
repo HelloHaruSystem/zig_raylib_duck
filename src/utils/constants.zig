@@ -26,6 +26,9 @@ pub const SCREEN_HEIGHT = 450;
 // movement constants
 pub const DUCK_SPEED: f32 = 2.6;                  // if sprite_scale is equal to 3 set it to 3.0 (REDUCED PROPORTIONALLY (3.0 * 1.5/2.0) == 2.25)
 
+// collision constants
+pub const COLLISION_MARGIN: f32 = 2.0;            // pixels of forgiveness around duck
+
 // display constants
 pub const REFERENCE_SCALE: f32 = 0.5;
 
