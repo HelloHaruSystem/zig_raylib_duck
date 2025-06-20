@@ -6,6 +6,7 @@ const rl = @cImport({
 const Duck = @import("player/duck.zig").Duck;
 const Input = @import("player/input.zig").Input;
 const TileMap = @import("world/tilemap.zig").Tilemap;
+const Camera = @import("world/camera.zig").Camera;
 const MapLoader = @import("utils/map_loader.zig").MapLoader;
 const constants = @import("utils/constants.zig");
 const paths = @import("utils/paths.zig");
@@ -14,6 +15,7 @@ pub const Game = struct {
     duck: Duck,
     duck_texture: rl.Texture2D,
     tilemap: TileMap,
+    camera: Camera,
     allocator: std.mem.Allocator,
 
     pub fn init(allocator: std.mem.Allocator) !Game {
@@ -39,12 +41,16 @@ pub const Game = struct {
         const tilemap = loadTilemap(allocator) catch |err| blk: {
             std.debug.print("Failed to load map file ({}), using default map", .{err});
             break :blk try TileMap.init(allocator, constants.VISIBLE_TILES_WIDTH, constants.VISIBLE_TILES_HEIGHT, constants.TILE_SIZE);
-        };
+        };        
+
+        // init camera
+        const camera_2d: Camera = Camera.init();
 
         return Game{
             .duck = Duck.init(duck_texture),
             .duck_texture = duck_texture,
             .tilemap = tilemap,
+            .camera = camera_2d,
             .allocator = allocator,
         };
     }
@@ -65,6 +71,7 @@ pub const Game = struct {
     fn update(self: *Game) void {
         const input = Input.update();
         self.duck.update(input, &self.tilemap);
+        self.camera.update(self.duck.position.x, self.duck.position.y);
     }
 
     fn draw(self: *Game) void {
@@ -73,14 +80,20 @@ pub const Game = struct {
 
         rl.ClearBackground(rl.SKYBLUE);
 
+        // begin camera then draw world objects (these will be affected by camera)
+        rl.BeginMode2D(self.camera.camera);
+
         // draw tilemap first (background)
         self.tilemap.draw();
 
-        // draw the reference sprite sheet
-        self.duck.drawReference();
-
         // draw the animated duck
         self.duck.draw();
+
+        // then end camera UI elements should go after
+        rl.EndMode2D();
+
+        // draw the reference sprite sheet
+        self.duck.drawReference();
 
         //draw UI
         self.drawUI();
