@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>TileMap editor</title>
+        <meta name="author" content="HelloHaruSystem">
+        <meta name="viewport" content="width-device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="styles.css">
+        <script src="script.js" defer></script>
+    </head>
+
+    <body>
+        <header>
+
+        </header>
+
+        <h1>Tilemap Editor</h1>
+
+        <div class="controls">
+            <label>
+                Width: <input type="number" id="width" value="16" min="5" max="50">
+            </label>
+            <label>
+                Height: <input type="number" id="height" value="9" min="5" max="50">
+            </label>
+            <button id="create-grid">Create Grid</button>
+            <button id="clear-grid">Clear</button>
+            <button id="add-border">Add Border</button>
+        </div>
+
+        <div class="tile-buttons">
+            <button id="grass-tile" class="grass selected">0 - Grass</button>
+            <button id="wall-tile" class="wall">1 - Wall</button>
+            <button id="water-tile" class="water">2 - Water</button>
+            <button id="toggle-spawn-mode">Set Spawn Point</button>
+        </div>
+
+        <p id="mode">Mode: Paint Tiles</p>
+        <p>Spawn Point: <span id="spawnInfo">X=1, Y=1</span></p>
+
+         <div class="grid" id="grid">
+
+         </div>
+
+         <div>
+            <label>Map Name: <input type="text" id="mapName" value="test_map"></label>
+            <button id="download-map">Download .map File</button>
+            <button id="copy-to-clipboard">Copy</button>
+            <button id="upload-file-to-edit">Edit existing file</button>
+        </div>
+
+        <textarea id="output" placeholder="Map data will appear here..."></textarea>
+    </body>
+
+    <footer>
+        <p>Tilemap Editor for <a href="https://github.com/HelloHaruSystem/zig_raylib_duck" target="_blank">🦆 Zig Raylib Duck Game</a></p>
+        <p>Create and edit .map files for your duck adventures!</p>
+    </footer>
+</html>
