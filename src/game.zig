@@ -121,7 +121,7 @@ pub const Game = struct {
     }
 
     fn loadTilemap(allocator: std.mem.Allocator, spawn_x: *f32, spawn_y: *f32) !TileMap {
-        if (loadSpecificMap(allocator, "level1", spawn_x, spawn_y)) |tilemap| {
+        if (loadSpecificMap(allocator, "test2", spawn_x, spawn_y)) |tilemap| {
             std.debug.print("Loaded test map\n", .{});
             return tilemap;
         } else |err| {
