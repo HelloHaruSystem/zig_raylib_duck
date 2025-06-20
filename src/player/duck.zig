@@ -19,8 +19,8 @@ pub const Duck = struct {
     pub fn init(texture: rl.Texture2D) Duck {
         return Duck{
             .position = rl.Vector2{
-                .x = @as(f32, @floatFromInt(constants.TILE_SIZE * 5)),
-                .y = @as(f32, @floatFromInt(constants.TILE_SIZE * 3)),
+                .x = @as(f32, @floatFromInt(constants.TILE_SIZE * 1)),
+                .y = @as(f32, @floatFromInt(constants.TILE_SIZE * 1)),
             },
             .animation = Animation.init(texture, constants.DUCK_IDLE_FRAMES, constants.DUCK_WALK_FRAMES, constants.DUCK_ROWS),
             .is_moving = false,

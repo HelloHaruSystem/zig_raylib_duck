@@ -37,17 +37,27 @@ pub const Game = struct {
 
         std.debug.print("Duck texture loaded successfully! Size: {}x{}\n", .{ duck_texture.width, duck_texture.height });
 
+        // spawn points starts at default (1, 1)
+        // but will be passed in with the loadTileMap function to get that maps spawn points
+        var spawn_x: f32 = @as(f32, @floatFromInt(1 * constants.TILE_SIZE));
+        var spawn_y: f32 = @as(f32, @floatFromInt(1 * constants.TILE_SIZE));
+
         // try to load tilemap from file, fallback to default genned
-        const tilemap = loadTilemap(allocator) catch |err| blk: {
+        const tilemap = loadTilemap(allocator, &spawn_x, &spawn_y) catch |err| blk: {
             std.debug.print("Failed to load map file ({}), using default map", .{err});
             break :blk try TileMap.init(allocator, constants.VISIBLE_TILES_WIDTH, constants.VISIBLE_TILES_HEIGHT, constants.TILE_SIZE);
-        };        
+        };
 
         // init camera
         const camera_2d: Camera = Camera.init();
 
+        // create duck with spawn positions from the map files (or default)
+        var duck = Duck.init(duck_texture);
+        duck.position.x = spawn_x;
+        duck.position.y = spawn_y;
+
         return Game{
-            .duck = Duck.init(duck_texture),
+            .duck = duck,
             .duck_texture = duck_texture,
             .tilemap = tilemap,
             .camera = camera_2d,
@@ -110,9 +120,8 @@ pub const Game = struct {
         rl.DrawText("Green=Grass, Brown=Solid, Blue=Water", 10, constants.SCREEN_HEIGHT - 20, 10, rl.DARKGRAY);
     }
 
-    fn loadTilemap(allocator: std.mem.Allocator) !TileMap {
-        
-        if (loadSpecificMap(allocator, "level1")) |tilemap| {
+    fn loadTilemap(allocator: std.mem.Allocator, spawn_x: *f32, spawn_y: *f32) !TileMap {
+        if (loadSpecificMap(allocator, "level1", spawn_x, spawn_y)) |tilemap| {
             std.debug.print("Loaded test map\n", .{});
             return tilemap;
         } else |err| {
@@ -124,11 +133,15 @@ pub const Game = struct {
         return error.NoMapFound;
     }
 
-    fn loadSpecificMap(allocator: std.mem.Allocator, map_name: []const u8) !TileMap {
+    fn loadSpecificMap(allocator: std.mem.Allocator, map_name: []const u8, spawn_x: *f32, spawn_y: *f32) !TileMap {
         var map_data = try MapLoader.loadMapByName(allocator, map_name);
         defer map_data.deinit();
 
-        std.debug.print("Map '{s}' loaded successfully. Size: {}x{}\n", .{map_name, map_data.width, map_data.height});
+        std.debug.print("Map '{s}' loaded successfully. Size: {}x{}, Spawn: ({}, {})\n", .{map_name, map_data.width, map_data.height, map_data.spawn_x, map_data.spawn_y});
+        
+        // convert tile coordinates to world coordinates
+        spawn_x.* = @as(f32, @floatFromInt(map_data.spawn_x * constants.TILE_SIZE));
+        spawn_y.* = @as(f32, @floatFromInt(map_data.spawn_y * constants.TILE_SIZE));
 
         return TileMap.initFromData(allocator, map_data.width, map_data.height, constants.TILE_SIZE, map_data.tiles);
     }

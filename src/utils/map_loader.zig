@@ -85,7 +85,7 @@ pub const MapLoader = struct {
                 const spawn_x_str = trimmed[8..];
                 spawn_x = std.fmt.parseInt(u32, spawn_x_str, 10) catch return MapLoadError.InvalidFormat;
             }
-            else if (std.men.startsWith(u8, trimmed, "SPAWN_Y=")) {
+            else if (std.mem.startsWith(u8, trimmed, "SPAWN_Y=")) {
                 const spawn_y_str = trimmed[8..];
                 spawn_y = std.fmt.parseInt(u32, spawn_y_str, 10) catch return MapLoadError.InvalidFormat;
             }
@@ -116,6 +116,8 @@ pub const MapLoader = struct {
         return MapData{
             .width = width,
             .height = height,
+            .spawn_x = spawn_x,
+            .spawn_y = spawn_y,
             .tiles = try tiles.toOwnedSlice(),
             .allocator = allocator,
         };
