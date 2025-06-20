@@ -112,7 +112,7 @@ pub const Game = struct {
 
     fn loadTilemap(allocator: std.mem.Allocator) !TileMap {
         
-        if (loadSpecificMap(allocator, "test")) |tilemap| {
+        if (loadSpecificMap(allocator, "level1")) |tilemap| {
             std.debug.print("Loaded test map\n", .{});
             return tilemap;
         } else |err| {

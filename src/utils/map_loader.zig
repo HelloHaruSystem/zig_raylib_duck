@@ -14,6 +14,8 @@ pub const MapData = struct{
     width: u32,
     height: u32,
     tiles: []u8,
+    spawn_x: u32,
+    spawn_y: u32,
     allocator: std.mem.Allocator,
 
     pub fn deinit(self: *MapData) void {
@@ -57,6 +59,8 @@ pub const MapLoader = struct {
     fn parseMapData(allocator: std.mem.Allocator, contents: []const u8) !MapData {
         var width: u32 = 0;
         var height: u32 = 0;
+        var spawn_x: u32 = 0;
+        var spawn_y: u32 = 0;
         var parsing_data = false;
         var tiles = std.ArrayList(u8).init(allocator);
         defer tiles.deinit();
@@ -72,12 +76,23 @@ pub const MapLoader = struct {
                 const width_str = trimmed[6..];
                 // if the format is wrong be sure to return InvalidFormat error for simpler debugging
                 width = std.fmt.parseInt(u32, width_str, 10) catch return MapLoadError.InvalidFormat;
-            } else if (std.mem.startsWith(u8, trimmed, "HEIGHT=")) {
+            } 
+            else if (std.mem.startsWith(u8, trimmed, "HEIGHT=")) {
                 const height_str = trimmed[7..];
                 height = std.fmt.parseInt(u32, height_str, 10) catch return MapLoadError.InvalidFormat;
-            } else if (std.mem.eql(u8, trimmed, "DATA=")) {
+            } 
+            else if (std.mem.startsWith(u8, trimmed, "SPAWN_X=")) {
+                const spawn_x_str = trimmed[8..];
+                spawn_x = std.fmt.parseInt(u32, spawn_x_str, 10) catch return MapLoadError.InvalidFormat;
+            }
+            else if (std.men.startsWith(u8, trimmed, "SPAWN_Y=")) {
+                const spawn_y_str = trimmed[8..];
+                spawn_y = std.fmt.parseInt(u32, spawn_y_str, 10) catch return MapLoadError.InvalidFormat;
+            }
+            else if (std.mem.eql(u8, trimmed, "DATA=")) {
                 parsing_data = true;
-            } else if (parsing_data) {
+            } 
+            else if (parsing_data) {
                 // now we parse the tile data row
                 // be sure to return proper errors
                 if (trimmed.len != width) return MapLoadError.InvalidTileData;
