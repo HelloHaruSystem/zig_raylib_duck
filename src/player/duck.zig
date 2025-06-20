@@ -72,23 +72,21 @@ pub const Duck = struct {
             const duck_width = self.animation.frame_width * constants.SPRITE_SCALE;
             const duck_height = self.animation.frame_height * constants.SPRITE_SCALE;
 
+            // NOTE Deprecated
+            // Only check collision with tilemap - no rectangular boundaries!
+            // The tilemap collision system handles all the complex shapes automatically
             // screen boundary checking
-            const max_x = @as(f32, @floatFromInt(constants.SCREEN_WIDTH)) - duck_width;
-            const max_y = @as(f32, @floatFromInt(constants.SCREEN_HEIGHT)) - duck_height;
+            // const max_x = @as(f32, @floatFromInt(tilemap.width * tilemap.tile_size)) - duck_width;
+            // const max_y = @as(f32, @floatFromInt(tilemap.height * tilemap.tile_size)) - duck_height;
 
             // check x movement
-            if (new_x >= 0 and new_x <= max_x) {
-                // check collision with tilemap for x movement
-                if (!self.checkCollision(new_x, self.position.y, duck_width, duck_height, tilemap)) {
-                    self.position.x = new_x;
-                }
+            if (!self.checkCollision(new_x, self.position.y, duck_width, duck_height, tilemap)) {
+                self.position.x = new_x;
             }
 
             // check y movement
-            if (new_y >= 0 and new_y <= max_y) {
-                if (!self.checkCollision(self.position.x, new_y, duck_width, duck_height, tilemap)) {
-                    self.position.y = new_y;
-                }
+            if (!self.checkCollision(self.position.x, new_y, duck_width, duck_height, tilemap)) {
+                self.position.y = new_y;
             }
         }
 
